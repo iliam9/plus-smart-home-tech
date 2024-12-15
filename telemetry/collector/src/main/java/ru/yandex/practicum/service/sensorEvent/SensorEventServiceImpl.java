@@ -25,7 +25,7 @@ public class SensorEventServiceImpl implements SensorEventService {
     public void collectEvent(SensorEvent event) {
         SensorEventAvro sensorEventAvro = mapToAvro(event);
         ProducerRecord<String, SpecificRecordBase> producerRecord = new ProducerRecord<>(topic, null,
-                sensorEventAvro.getTimestamp().getEpochSecond(), null, sensorEventAvro);
+                sensorEventAvro.getTimestamp().toEpochMilli(), null, sensorEventAvro);
         kafkaClient.getProducer().send(producerRecord);
     }
 

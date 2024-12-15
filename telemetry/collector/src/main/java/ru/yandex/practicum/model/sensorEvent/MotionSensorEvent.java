@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class MotionSensorEvent extends SensorEvent{
+public class MotionSensorEvent extends SensorEvent {
 
     @NotNull
     private int linkQuality;

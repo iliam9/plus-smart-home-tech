@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class TemperatureSensorEvent  extends SensorEvent{
+public class TemperatureSensorEvent extends SensorEvent {
 
     @NotNull
     private int temperatureC;

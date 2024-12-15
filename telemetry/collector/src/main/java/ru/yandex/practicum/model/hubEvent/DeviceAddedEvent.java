@@ -10,7 +10,7 @@ import ru.yandex.practicum.model.sensorEvent.SensorEventType;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class DeviceAddedEvent  extends HubEvent{
+public class DeviceAddedEvent extends HubEvent {
 
     @NotBlank
     private String id;
