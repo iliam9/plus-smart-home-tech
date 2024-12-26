@@ -20,6 +20,7 @@
         <module>infra</module>
         <module>commerce</module>
         <module>telemetry/analyzer</module>
+        <module>telemetry/hubRouter</module>
     </modules>
 
     <properties>
