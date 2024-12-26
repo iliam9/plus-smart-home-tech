@@ -43,8 +43,8 @@ public class HubEventProcessor implements Runnable {
                     HubEventAvro hubEventAvro = record.value();
                     log.info("Received hubEvent from hub ID = {}", hubEventAvro.getHubId());
                     handler.handle(hubEventAvro);
+                    manageOffsets(record, consumer);
                 }
-
             }
         } catch (WakeupException ignored) {
 
@@ -68,6 +68,14 @@ public class HubEventProcessor implements Runnable {
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, VoidDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, HubEventDeserializer.class);
         return properties;
+    }
+
+    private static void manageOffsets(ConsumerRecord<String, HubEventAvro> record,
+                                      KafkaConsumer<String, HubEventAvro> consumer) {
+        currentOffsets.put(
+                new TopicPartition(record.topic(), record.partition()),
+                new OffsetAndMetadata(record.offset() + 1)
+        );
     }
 
 }
