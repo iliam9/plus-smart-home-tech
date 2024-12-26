@@ -1,14 +1,13 @@
 package ru.yandex.practicum.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
+@Table(name = "actions")
+@SecondaryTable(name = "scenario_actions", pkJoinColumns = @PrimaryKeyJoinColumn(name = "action_id"))
 @Getter
 @Setter
 @ToString
@@ -21,4 +20,12 @@ public class Action {
     private ActionType type;
 
     private int value;
+
+    @ManyToOne
+    @JoinColumn(name = "scenario_id", table = "scenario_actions")
+    private Scenario scenario;
+
+    @ManyToOne()
+    @JoinColumn(name = "sensor_id", table = "scenario_actions")
+    private Sensor sensor;
 }

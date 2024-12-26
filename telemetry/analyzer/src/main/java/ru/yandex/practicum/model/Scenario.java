@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
+@Table(name = "scenarios")
 @Getter
 @Setter
 @ToString
