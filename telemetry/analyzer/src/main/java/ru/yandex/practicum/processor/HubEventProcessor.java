@@ -1,18 +1,14 @@
 package ru.yandex.practicum.processor;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.VoidDeserializer;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.grpc.telemetry.event.HubEvent;
+import ru.yandex.practicum.handlers.HubEventHandler;
 import ru.yandex.practicum.kafka.deserializer.HubEventDeserializer;
-import ru.yandex.practicum.kafka.deserializer.SensorEventDeserializer;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -22,7 +18,6 @@ import java.util.Properties;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class HubEventProcessor implements Runnable {
 
     private static final List<String> TOPICS = List.of("telemetry.hubs.v1");
@@ -30,9 +25,11 @@ public class HubEventProcessor implements Runnable {
     private static final Duration CONSUME_ATTEMPT_TIMEOUT = Duration.ofMillis(1000);
 
     private final KafkaConsumer<String, HubEventAvro> consumer;
+    private final HubEventHandler handler;
 
-    public HubEventProcessor() {
+    public HubEventProcessor(HubEventHandler handler) {
         consumer = new KafkaConsumer<>(getConsumerProperties());
+        this.handler = handler;
     }
 
     @Override
@@ -43,14 +40,16 @@ public class HubEventProcessor implements Runnable {
             while (true) {
                 ConsumerRecords<String, HubEventAvro> records = consumer.poll(CONSUME_ATTEMPT_TIMEOUT);
                 for (ConsumerRecord<String, HubEventAvro> record : records) {
-                    System.out.println(record.value());
+                    HubEventAvro hubEventAvro = record.value();
+                    log.info("Received hubEvent from hub ID = {}", hubEventAvro.getHubId());
+                    handler.handle(hubEventAvro);
                 }
 
             }
         } catch (WakeupException ignored) {
 
         } catch (Exception e) {
-            log.error("Error:",e);
+            log.error("Error:", e);
         } finally {
             try {
                 consumer.commitSync(currentOffsets);
