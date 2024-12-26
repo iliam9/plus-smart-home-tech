@@ -62,8 +62,8 @@ public class HubEventProcessor implements Runnable {
 
     private static Properties getConsumerProperties() {
         Properties properties = new Properties();
-        properties.put(ConsumerConfig.CLIENT_ID_CONFIG, "consumer");
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "analyzing");
+        properties.put(ConsumerConfig.CLIENT_ID_CONFIG, "hubConsumer");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "hub.analyzing");
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, VoidDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, HubEventDeserializer.class);
