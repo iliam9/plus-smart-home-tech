@@ -15,11 +15,16 @@ public class Analyzer {
                 SpringApplication.run(Analyzer.class, args);
 
 
+
+
         SnapshotProcessor snapshotProcessor =
                 context.getBean(SnapshotProcessor.class);
 
         final HubEventProcessor hubEventProcessor =
                 context.getBean(HubEventProcessor.class);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(snapshotProcessor::stop));
+        Runtime.getRuntime().addShutdownHook(new Thread(hubEventProcessor::stop));
 
 
         Thread hubEventsThread = new Thread(hubEventProcessor);

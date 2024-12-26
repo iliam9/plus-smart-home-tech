@@ -60,6 +60,10 @@ public class HubEventProcessor implements Runnable {
         }
     }
 
+    public void stop() {
+        consumer.wakeup();
+    }
+
     private static Properties getConsumerProperties() {
         Properties properties = new Properties();
         properties.put(ConsumerConfig.CLIENT_ID_CONFIG, "hubConsumer");

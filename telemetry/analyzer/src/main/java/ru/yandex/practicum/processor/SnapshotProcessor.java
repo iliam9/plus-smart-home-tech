@@ -35,6 +35,7 @@ public class SnapshotProcessor {
 
     public void start() {
         try {
+            Runtime.getRuntime().addShutdownHook(new Thread(consumer::wakeup));
             consumer.subscribe(TOPICS);
 
             while (true) {
@@ -58,6 +59,10 @@ public class SnapshotProcessor {
                 log.info("Consumer close");
             }
         }
+    }
+
+    public void stop() {
+        consumer.wakeup();
     }
 
     private static Properties getConsumerProperties() {
