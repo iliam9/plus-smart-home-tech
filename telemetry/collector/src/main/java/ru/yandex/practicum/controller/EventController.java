@@ -1,34 +1,71 @@
 package ru.yandex.practicum.controller;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import com.google.protobuf.Empty;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.model.hubEvent.HubEvent;
-import ru.yandex.practicum.model.sensorEvent.SensorEvent;
-import ru.yandex.practicum.service.hubEvent.HubEventService;
-import ru.yandex.practicum.service.sensorEvent.SensorEventService;
+import net.devh.boot.grpc.server.service.GrpcService;
+import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
+import ru.yandex.practicum.grpc.telemetry.event.*;
+import ru.yandex.practicum.handlers.hubEvent.HubEventHandler;
+import ru.yandex.practicum.handlers.sensorEvent.SensorEventHandler;
 
-@RestController
-@RequestMapping("/events")
-@RequiredArgsConstructor
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@GrpcService
 @Slf4j
-public class EventController {
-    private final SensorEventService sensorEventService;
-    private final HubEventService hubEventService;
+public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
 
-    @PostMapping("/sensors")
-    public void collectSensorEvent(@Valid @RequestBody SensorEvent event) {
-        log.info("Received sensor event: {}", event);
-        sensorEventService.collectEvent(event);
+
+    private final Map<SensorEventProto.PayloadCase, SensorEventHandler> sensorEventHandlers;
+    private final Map<HubEventProto.PayloadCase, HubEventHandler> hubEventHandlers;
+
+    public EventController(Set<SensorEventHandler> sensorEventHandlers, Set<HubEventHandler> hubEventHandlers) {
+        this.sensorEventHandlers = sensorEventHandlers.stream()
+                .collect(Collectors.toMap(
+                        SensorEventHandler::getMessageType,
+                        Function.identity()
+                ));
+        this.hubEventHandlers = hubEventHandlers.stream()
+                .collect(Collectors.toMap(
+                        HubEventHandler::getMessageType,
+                        Function.identity()
+                ));
     }
 
-    @PostMapping("/hubs")
-    public void collectHubEvent(@Valid @RequestBody HubEvent event) {
-        log.info("Received hub event: {}", event);
-        hubEventService.collectEvent(event);
+    @Override
+    public void collectSensorEvent(SensorEventProto request, StreamObserver<Empty> responseObserver) {
+        try {
+            log.info("Received event from sensor ID = {}", request.getId());
+            sensorEventHandlers.get(request.getPayloadCase()).handle(request);
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(new StatusRuntimeException(
+                    Status.INTERNAL
+                            .withDescription(e.getLocalizedMessage())
+                            .withCause(e)
+            ));
+        }
+    }
+
+    @Override
+    public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
+        try {
+            log.info("Received event from hub ID = {}", request.getHubId());
+            hubEventHandlers.get(request.getPayloadCase()).handle(request);
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(new StatusRuntimeException(
+                    Status.INTERNAL
+                            .withDescription(e.getLocalizedMessage())
+                            .withCause(e)
+            ));
+        }
     }
 }
