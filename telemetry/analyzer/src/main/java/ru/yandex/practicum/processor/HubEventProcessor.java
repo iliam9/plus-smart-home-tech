@@ -6,6 +6,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.VoidDeserializer;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.handler.HubEventHandler;
 import ru.yandex.practicum.kafka.deserializer.HubEventDeserializer;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 
@@ -52,7 +53,7 @@ public class HubEventProcessor implements Runnable {
                 consumer.commitSync(currentOffsets);
             } finally {
                 consumer.close();
-                log.info("Consumer close");
+                log.info("Consumer closed");
             }
         }
     }
