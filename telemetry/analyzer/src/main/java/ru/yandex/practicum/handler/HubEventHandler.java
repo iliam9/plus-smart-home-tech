@@ -22,12 +22,10 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class HubEventHandler {
-
     private final SensorRepository sensorRepository;
     private final ScenarioRepository scenarioRepository;
     private final ConditionRepository conditionRepository;
     private final ActionRepository actionRepository;
-
 
     public void handle(HubEventAvro event) {
         Object payload = event.getPayload();
@@ -81,7 +79,6 @@ public class HubEventHandler {
             log.error("Scenario with name: \"{}\" in hub ID: \"{}\" is not valid", event.getName(), hubId);
         }
     }
-
 
     private void handleScenarioRemoved(String hubId, ScenarioRemovedEventAvro event) {
         log.info("Handle removal of scenario from hub ID: \"{}\"", hubId);
