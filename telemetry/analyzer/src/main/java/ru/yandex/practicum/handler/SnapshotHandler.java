@@ -29,7 +29,6 @@ public class SnapshotHandler {
     private final ConditionRepository conditionRepository;
     private final ActionRepository actionRepository;
 
-
     public void handle(SensorsSnapshotAvro snapshot) {
         String hubId = snapshot.getHubId();
         log.info("Handle snapshot from hub ID: \"{}\"", hubId);
@@ -161,11 +160,10 @@ public class SnapshotHandler {
                 return data.getCo2Level();
             };
 
-            case HUMIDITY ->
-                    func = x -> {
-                        ClimateSensorAvro data = (ClimateSensorAvro) x.getData();
-                        return data.getHumidity();
-                    };
+            case HUMIDITY -> func = x -> {
+                ClimateSensorAvro data = (ClimateSensorAvro) x.getData();
+                return data.getHumidity();
+            };
             default -> {
                 return null;
             }

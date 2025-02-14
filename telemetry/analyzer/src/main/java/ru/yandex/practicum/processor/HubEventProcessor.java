@@ -19,10 +19,11 @@ import java.util.Properties;
 @Slf4j
 @Component
 public class HubEventProcessor implements Runnable {
-    private final HubEventHandler handler;
     private static final List<String> TOPICS = List.of("telemetry.hubs.v1");
     private static final Map<TopicPartition, OffsetAndMetadata> currentOffsets = new HashMap<>();
     private static final Duration CONSUME_ATTEMPT_TIMEOUT = Duration.ofMillis(1000);
+
+    private final HubEventHandler handler;
     private final KafkaConsumer<String, HubEventAvro> consumer;
 
     public HubEventProcessor(HubEventHandler handler) {
