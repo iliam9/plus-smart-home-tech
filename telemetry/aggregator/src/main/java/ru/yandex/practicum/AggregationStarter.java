@@ -15,6 +15,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.VoidDeserializer;
 import org.apache.kafka.common.serialization.VoidSerializer;
+import org.apache.kafka.common.utils.Utils;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.deserializer.SensorEventDeserializer;
 import ru.yandex.practicum.kafka.serializer.GeneralKafkaSerializer;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -84,7 +84,8 @@ public class AggregationStarter {
                 log.info("Закрываем консьюмер");
                 consumer.close();
                 log.info("Закрываем продюсер");
-                producer.close(100000, TimeUnit.MILLISECONDS);
+                Utils.sleep(100000);
+                producer.close();
             }
         }
     }
