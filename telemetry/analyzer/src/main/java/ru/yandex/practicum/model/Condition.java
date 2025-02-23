@@ -25,9 +25,9 @@ public class Condition {
 
     @ManyToOne
     @JoinColumn(name = "scenario_id", table = "scenario_conditions")
-    private Scenario scenario;
+    Scenario scenario;
 
     @ManyToOne
     @JoinColumn(name = "sensor_id", table = "scenario_conditions")
-    private Sensor sensor;
+    Sensor sensor;
 }

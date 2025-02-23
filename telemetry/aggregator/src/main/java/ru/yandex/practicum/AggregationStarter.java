@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -83,7 +84,7 @@ public class AggregationStarter {
                 log.info("Закрываем консьюмер");
                 consumer.close();
                 log.info("Закрываем продюсер");
-                producer.close();
+                producer.close(100000, TimeUnit.MILLISECONDS);
             }
         }
     }
