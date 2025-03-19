@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: analyzer
   jpa:
     hibernate:
       ddl-auto: none
@@ -17,7 +19,7 @@ spring:
 grpc:
   client:
     hub-router:
-      address: static://localhost:59090
+      address: discovery:///hubRouter
       enableKeepAlive: true
       keepAliveWithoutCalls: true
       negotiationType: plaintext
@@ -44,3 +46,8 @@ analyzer:
   snapshot-topics:
     - telemetry.snapshots.v1
   snapshot-consume-attempt-timeout: 1000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
