@@ -15,3 +15,12 @@ aggregator:
   sensor-topic:
     - telemetry.sensors.v1
   consume-attempt-timeout: 1000
+
+spring:
+  application:
+    name: aggregator
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
