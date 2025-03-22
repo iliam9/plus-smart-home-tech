@@ -1,8 +1,6 @@
 package ru.yandex.practicum.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "product")
+@Table(name = "cart")
 @Getter
 @Setter
 @ToString
@@ -24,7 +22,14 @@ public class ShoppingCart {
     @UuidGenerator
     UUID shoppingCartId;
 
+    @ElementCollection
+    @CollectionTable(name = "cart_products", joinColumns = @JoinColumn(name = "cart_id"))
+    @MapKeyColumn(name = "product_id")
+    @Column(name = "quantity")
     Map<UUID, Integer> products;
 
     String username;
+
+    @Enumerated(EnumType.STRING)
+    ShoppingCartState state;
 }
