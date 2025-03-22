@@ -14,28 +14,19 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductDto {
     UUID productId;
-
     @NotNull
     @Size(min = 1)
-    private String productName;
-
+    String productName;
     @NotNull
     @Size(min = 1)
-    private String description;
-
-    private String imageSrc;
-
+    String description;
+    String imageSrc;
     @NotNull
-    private QuantityState quantityState;
-
+    QuantityState quantityState;
     @NotNull
-    private ProductState productState;
-
+    ProductState productState;
+    Double rating;
+    ProductCategory productCategory;
     @NotNull
-    private Double rating;
-
-    private ProductCategory productCategory;
-
-    @NotNull
-    private Double price;
+    Double price;
 }

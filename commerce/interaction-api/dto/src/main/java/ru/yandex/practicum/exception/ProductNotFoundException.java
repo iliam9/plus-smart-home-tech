@@ -15,20 +15,8 @@ public class ProductNotFoundException extends RuntimeException {
   StackTraceElement[] stackTrace;
   Throwable cause;
 
-  public ProductNotFoundException(String message, String httpStatus, String userMessage) {
+  public ProductNotFoundException(String message) {
     super(message);
-    this.httpStatus = httpStatus;
-    this.userMessage = userMessage;
-    this.message = message;
-    this.stackTrace = Thread.currentThread().getStackTrace();
-  }
-
-  public ProductNotFoundException(String message, Throwable cause, String httpStatus, String userMessage) {
-    super(message, cause);
-    this.cause = cause;
-    this.httpStatus = httpStatus;
-    this.userMessage = userMessage;
-    this.message = message;
     this.stackTrace = Thread.currentThread().getStackTrace();
   }
 }

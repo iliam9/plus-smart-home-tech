@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: shoppingStore
+    name: shopping-store
   jpa:
     hibernate:
       ddl-auto: none
