@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.Pageable;
-import ru.yandex.practicum.model.ProductCategory;
 import ru.yandex.practicum.model.ProductDto;
 import ru.yandex.practicum.request.SetProductQuantityStateRequest;
 import ru.yandex.practicum.service.ShoppingStoreService;

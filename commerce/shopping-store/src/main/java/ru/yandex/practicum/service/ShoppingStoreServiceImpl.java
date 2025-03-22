@@ -76,6 +76,7 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
         Sort sort = createSort(params.getSort());
         PageRequest pageable = PageRequest.of(params.getPage(), params.getSize(), sort);
         List<Product> products = productRepository.findAll(query, pageable).getContent();
+        log.info("Search is complete");
         return productMapper.mapToListProductDto(products);
     }
 
