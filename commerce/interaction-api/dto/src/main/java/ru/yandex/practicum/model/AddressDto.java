@@ -1,6 +1,6 @@
 package ru.yandex.practicum.model;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,13 +11,21 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookedProductsDto {
+public class AddressDto {
 
-    @NotNull
-    Double deliveryWeight;
+    @NotBlank
+    String country;
 
-    @NotNull
-    Double deliveryVolume;
+    @NotBlank
+    String city;
 
-    Boolean fragile;
+    @NotBlank
+    String street;
+
+    @NotBlank
+    String house;
+
+    @NotBlank
+    String flat;
+
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.exception.NotAuthorizedUserException;
 import ru.yandex.practicum.mapper.ShoppingCartMapper;
-import ru.yandex.practicum.model.ChangeProductQuantityRequest;
+import ru.yandex.practicum.request.ChangeProductQuantityRequest;
 import ru.yandex.practicum.model.ShoppingCart;
 import ru.yandex.practicum.model.ShoppingCartDto;
 import ru.yandex.practicum.model.ShoppingCartState;

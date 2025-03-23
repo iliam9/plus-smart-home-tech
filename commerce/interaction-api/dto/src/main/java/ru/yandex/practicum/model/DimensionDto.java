@@ -1,6 +1,6 @@
 package ru.yandex.practicum.model;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,13 +11,15 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookedProductsDto {
+public class DimensionDto {
 
-    @NotNull
-    Double deliveryWeight;
+    @DecimalMin(value = "1")
+    double width;
 
-    @NotNull
-    Double deliveryVolume;
+    @DecimalMin(value = "1")
+    double height;
 
-    Boolean fragile;
+    @DecimalMin(value = "1")
+    double depth;
+
 }

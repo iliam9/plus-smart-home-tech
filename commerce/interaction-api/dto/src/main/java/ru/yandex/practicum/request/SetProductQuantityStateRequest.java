@@ -12,8 +12,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SetProductQuantityStateRequest {
+
     @NotNull
     UUID productId;
+
     @NotNull
     QuantityState quantityState;
 }

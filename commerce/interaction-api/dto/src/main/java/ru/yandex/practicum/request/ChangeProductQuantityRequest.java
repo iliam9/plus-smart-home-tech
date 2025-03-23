@@ -1,4 +1,4 @@
-package ru.yandex.practicum.model;
+package ru.yandex.practicum.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

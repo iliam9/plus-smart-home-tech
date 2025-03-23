@@ -8,25 +8,33 @@ import lombok.experimental.FieldDefaults;
 import java.util.UUID;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductDto {
+
     UUID productId;
+
     @NotNull
     @Size(min = 1)
     String productName;
+
     @NotNull
     @Size(min = 1)
     String description;
+
     String imageSrc;
+
     @NotNull
     QuantityState quantityState;
+
     @NotNull
     ProductState productState;
+
     Double rating;
+
     ProductCategory productCategory;
+
     @NotNull
     Double price;
 }
