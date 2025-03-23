@@ -1,12 +1,17 @@
 package ru.yandex.practicum.service;
 
 
+import feign.FeignException;
+import jakarta.ws.rs.InternalServerErrorException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.WarehouseOperations;
 import ru.yandex.practicum.exception.NotAuthorizedUserException;
+import ru.yandex.practicum.exception.ProductInShoppingCartNotInWarehouse;
 import ru.yandex.practicum.mapper.ShoppingCartMapper;
+import ru.yandex.practicum.model.BookedProductsDto;
 import ru.yandex.practicum.request.ChangeProductQuantityRequest;
 import ru.yandex.practicum.model.ShoppingCart;
 import ru.yandex.practicum.model.ShoppingCartDto;
@@ -25,6 +30,7 @@ import java.util.UUID;
 public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartMapper shoppingCartMapper;
+    private final WarehouseOperations warehouseClient;
 
     @Override
     @Transactional
@@ -63,10 +69,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         validateUsername(username);
         ShoppingCart shoppingCart = getShoppingCart(username);
         Map<UUID, Integer> productMap = shoppingCart.getProducts();
-        productMap.keySet().retainAll(products);
+        products.forEach(productMap::remove);
         shoppingCart.setProducts(productMap);
         shoppingCartRepository.save(shoppingCart);
-        log.info("Product in shopping cart of user {} have been changed", username);
+        log.info("Product in shopping cart of user {} have been removed", username);
         return shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
     }
 
@@ -81,6 +87,27 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCartRepository.save(shoppingCart);
         log.info("Product quantity is changed to {}", request.getNewQuantity());
         return shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
+    }
+
+    @Override
+    @Transactional
+    public BookedProductsDto bookProductFromShoppingCart(String username) {
+        validateUsername(username);
+        ShoppingCart shoppingCart = getShoppingCart(username);
+        try {
+            ShoppingCartDto shoppingCartDto = shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
+            BookedProductsDto bookedProductsDto = warehouseClient.checkShoppingCart(shoppingCartDto);
+            log.info("Booked product from shopping cart ID: {}", shoppingCart.getShoppingCartId());
+            return bookedProductsDto;
+        } catch (FeignException e) {
+            if (e.status() == 400) {
+                throw new ProductInShoppingCartNotInWarehouse(
+                        String.format("Product from shopping cart ID: %s not in warehouse",
+                                shoppingCart.getShoppingCartId()));
+            } else {
+                throw new InternalServerErrorException("Service warehouse is not available");
+            }
+        }
     }
 
     private void validateUsername(String username) {

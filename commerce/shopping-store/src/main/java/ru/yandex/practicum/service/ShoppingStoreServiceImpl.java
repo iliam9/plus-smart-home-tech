@@ -80,14 +80,6 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
         return productMapper.mapToListProductDto(products);
     }
 
-    @Override
-    public void updateProductQuantity(SetProductQuantityStateRequest request) {
-        Product product = getProduct(request.getProductId());
-        product.setQuantityState(request.getQuantityState());
-        productRepository.save(product);
-        log.info("Updated quantity of product with ID: {}", request.getProductId());
-    }
-
     private Product getProduct(UUID id) {
         return productRepository.findById(id).orElseThrow(() -> {
             log.info("Product with ID: {} is not found", id);

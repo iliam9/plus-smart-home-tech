@@ -46,13 +46,6 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
         shoppingStoreService.removeProductFromStore(productId);
     }
 
-    @PostMapping("/quantityState")
-    public void setProductQuantity(SetProductQuantityStateRequest request) {
-        log.info("Received request to change product with ID: {} quantity state to: {}",
-                request.getProductId(), request.getQuantityState());
-        shoppingStoreService.setProductQuantityState(request);
-    }
-
     @GetMapping
     public Collection<ProductDto> searchProducts(String category, Pageable params) {
         log.info("Received request to search products from category {} with params: {}", category, params);
@@ -63,6 +56,6 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
     public void updateProductQuantity(UUID productId, QuantityState quantityState) throws FeignException {
         SetProductQuantityStateRequest request = new SetProductQuantityStateRequest(productId, quantityState);
         log.info("Received request to update product quantity: {}", request);
-        shoppingStoreService.updateProductQuantity(request);
+        shoppingStoreService.setProductQuantityState(request);
     }
 }

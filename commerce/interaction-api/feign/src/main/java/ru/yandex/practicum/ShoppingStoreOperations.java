@@ -9,6 +9,7 @@ import ru.yandex.practicum.model.QuantityState;
 
 import java.util.UUID;
 
+
 @FeignClient(name = "shopping-store", path = "/api/v1/shopping-store")
 public interface ShoppingStoreOperations {
 

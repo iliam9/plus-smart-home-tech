@@ -1,5 +1,6 @@
 package ru.yandex.practicum.service;
 
+import ru.yandex.practicum.model.BookedProductsDto;
 import ru.yandex.practicum.request.ChangeProductQuantityRequest;
 import ru.yandex.practicum.model.ShoppingCartDto;
 
@@ -18,4 +19,6 @@ public interface ShoppingCartService {
     ShoppingCartDto removeProductsFromShoppingCart(String username, List<UUID> products);
 
     ShoppingCartDto changeProductQuantityInCart(String username, ChangeProductQuantityRequest request);
+
+    BookedProductsDto bookProductFromShoppingCart(String username);
 }

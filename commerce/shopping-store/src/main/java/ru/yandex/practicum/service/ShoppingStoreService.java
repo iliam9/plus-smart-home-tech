@@ -20,6 +20,4 @@ public interface ShoppingStoreService {
     void setProductQuantityState(SetProductQuantityStateRequest request);
 
     Collection<ProductDto> searchProducts(String category, Pageable params);
-
-    void updateProductQuantity(SetProductQuantityStateRequest request);
 }
