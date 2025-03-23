@@ -39,6 +39,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Map<UUID, Integer> oldProducts = shoppingCart.getProducts();
         oldProducts.putAll(products);
         shoppingCart.setProducts(oldProducts);
+        log.info("Sending request to check shopping cart: {}", shoppingCartMapper.mapToShoppingCartDto(shoppingCart));
+        warehouseClient.checkShoppingCart(shoppingCartMapper.mapToShoppingCartDto(shoppingCart));
         shoppingCartRepository.save(shoppingCart);
         log.info("Products added to shopping cart: {}", shoppingCart);
         return shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
