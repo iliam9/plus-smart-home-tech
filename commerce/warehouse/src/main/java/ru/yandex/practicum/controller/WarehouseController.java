@@ -1,9 +1,13 @@
 package ru.yandex.practicum.controller;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.WarehouseOperations;
 import ru.yandex.practicum.model.AddressDto;
+import ru.yandex.practicum.model.BookedProductsDto;
+import ru.yandex.practicum.model.ShoppingCartDto;
 import ru.yandex.practicum.request.AddProductToWarehouseRequest;
 import ru.yandex.practicum.request.NewProductInWarehouseRequest;
 import ru.yandex.practicum.service.WarehouseService;
@@ -12,7 +16,7 @@ import ru.yandex.practicum.service.WarehouseService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/warehouse")
-public class WarehouseController {
+public class WarehouseController implements WarehouseOperations {
     private final WarehouseService warehouseService;
 
     @PutMapping
@@ -31,5 +35,11 @@ public class WarehouseController {
     public AddressDto getWarehouseAddress() {
         log.info("Received request to get closest warehouse address");
         return warehouseService.getWarehouseAddress();
+    }
+
+    @Override
+    public BookedProductsDto checkShoppingCart(ShoppingCartDto shoppingCartDto) throws FeignException {
+        log.info("Received request to check shopping cart ID: {}", shoppingCartDto.getShoppingCartId());
+        return warehouseService.checkShoppingCart(shoppingCartDto);
     }
 }
