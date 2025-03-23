@@ -16,6 +16,7 @@
         <module>interaction-api</module>
         <module>interaction-api/dto</module>
         <module>shopping-cart</module>
+        <module>warehouse</module>
     </modules>
 
 </project>
