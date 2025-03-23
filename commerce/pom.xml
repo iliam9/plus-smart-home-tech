@@ -17,6 +17,7 @@
         <module>interaction-api/dto</module>
         <module>shopping-cart</module>
         <module>warehouse</module>
+        <module>interaction-api/feign</module>
     </modules>
 
 </project>

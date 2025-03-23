@@ -1,11 +1,14 @@
 package ru.yandex.practicum.controller;
 
+import feign.FeignException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.ShoppingStoreOperations;
 import ru.yandex.practicum.model.Pageable;
 import ru.yandex.practicum.model.ProductDto;
+import ru.yandex.practicum.model.QuantityState;
 import ru.yandex.practicum.request.SetProductQuantityStateRequest;
 import ru.yandex.practicum.service.ShoppingStoreService;
 
@@ -16,7 +19,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/shopping-store")
-public class ShoppingStoreController {
+public class ShoppingStoreController implements ShoppingStoreOperations {
     private final ShoppingStoreService shoppingStoreService;
 
     @PutMapping
@@ -54,5 +57,12 @@ public class ShoppingStoreController {
     public Collection<ProductDto> searchProducts(String category, Pageable params) {
         log.info("Received request to search products from category {} with params: {}", category, params);
         return shoppingStoreService.searchProducts(category, params);
+    }
+
+    @Override
+    public void updateProductQuantity(UUID productId, QuantityState quantityState) throws FeignException {
+        SetProductQuantityStateRequest request = new SetProductQuantityStateRequest(productId, quantityState);
+        log.info("Received request to update product quantity: {}", request);
+        shoppingStoreService.updateProductQuantity(request);
     }
 }
