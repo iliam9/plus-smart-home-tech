@@ -22,7 +22,7 @@ public class ApiError {
         this.userMessage = userMessage;
         this.message = e.getMessage();
         this.suppressed = e.getSuppressed();
-        this.localizedMessage = this.getLocalizedMessage();
+        this.localizedMessage = e.getLocalizedMessage();
 
     }
 }
