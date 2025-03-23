@@ -39,11 +39,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Map<UUID, Integer> oldProducts = shoppingCart.getProducts();
         oldProducts.putAll(products);
         shoppingCart.setProducts(oldProducts);
-        log.info("Sending request to check shopping cart: {}", shoppingCartMapper.mapToShoppingCartDto(shoppingCart));
-        warehouseClient.checkShoppingCart(shoppingCartMapper.mapToShoppingCartDto(shoppingCart));
+        ShoppingCartDto cartDto = shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
+        log.info("Sending request to check shopping cart: {}", cartDto);
+        warehouseClient.checkShoppingCart(cartDto);
         shoppingCartRepository.save(shoppingCart);
         log.info("Products added to shopping cart: {}", shoppingCart);
-        return shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
+        return cartDto;
     }
 
     @Override
@@ -86,10 +87,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Map<UUID, Integer> cartProducts = shoppingCart.getProducts();
         cartProducts.put(request.getProductId(), request.getNewQuantity());
         shoppingCart.setProducts(cartProducts);
-        warehouseClient.checkShoppingCart(shoppingCartMapper.mapToShoppingCartDto(shoppingCart));
+        ShoppingCartDto cartDto = shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
+        warehouseClient.checkShoppingCart(cartDto);
         shoppingCartRepository.save(shoppingCart);
         log.info("Product quantity is changed to {}", request.getNewQuantity());
-        return shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
+        return cartDto;
     }
 
     @Override
