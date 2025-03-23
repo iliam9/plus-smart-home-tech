@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,9 +17,9 @@ import lombok.experimental.FieldDefaults;
 public class AddProductToWarehouseRequest {
 
     @NotBlank
-    String productId;
+    UUID productId;
 
     @DecimalMin(value = "1")
-    long quantity;
+    int quantity;
 
 }
