@@ -10,7 +10,7 @@ import ru.yandex.practicum.exception.ProductNotFoundException;
 
 @Slf4j
 @RestControllerAdvice
-public class ErrorHandler {
+public class ShoppingStoreErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
