@@ -86,6 +86,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Map<UUID, Integer> cartProducts = shoppingCart.getProducts();
         cartProducts.put(request.getProductId(), request.getNewQuantity());
         shoppingCart.setProducts(cartProducts);
+        warehouseClient.checkShoppingCart(shoppingCartMapper.mapToShoppingCartDto(shoppingCart));
         shoppingCartRepository.save(shoppingCart);
         log.info("Product quantity is changed to {}", request.getNewQuantity());
         return shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
@@ -96,7 +97,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public BookedProductsDto bookProductFromShoppingCart(String username) {
         validateUsername(username);
         ShoppingCart shoppingCart = getShoppingCart(username);
-
         try {
             ShoppingCartDto shoppingCartDto = shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
             BookedProductsDto bookedProductsDto = warehouseClient.checkShoppingCart(shoppingCartDto);
