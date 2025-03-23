@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS cart_products;
-DROP TABLE IF EXISTS cart;
+--DROP TABLE IF EXISTS cart_products;
+--DROP TABLE IF EXISTS cart;
 
 CREATE TABLE IF NOT EXISTS cart (
     shopping_cart_id UUID PRIMARY KEY,

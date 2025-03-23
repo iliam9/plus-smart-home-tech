@@ -40,7 +40,7 @@ public class AggregationStarter {
 
                 int count = 0;
                 for (ConsumerRecord<String, SensorEventAvro> record : records) {
-                    Optional<SensorsSnapshotAvro> sensorsSnapshotAvroOpt= recordHandler.updateState(record.value());
+                    Optional<SensorsSnapshotAvro> sensorsSnapshotAvroOpt = recordHandler.updateState(record.value());
                     if (sensorsSnapshotAvroOpt.isPresent()) {
                         SensorsSnapshotAvro snapshotAvro = sensorsSnapshotAvroOpt.get();
                         ProducerRecord<String, SpecificRecordBase> producerRecord =
@@ -88,9 +88,9 @@ public class AggregationStarter {
                 new OffsetAndMetadata(record.offset() + 1)
         );
 
-        if(count % COUNT_COMMIT_OFFSETS == 0) {
+        if (count % COUNT_COMMIT_OFFSETS == 0) {
             consumer.commitAsync(currentOffsets, (offsets, exception) -> {
-                if(exception != null) {
+                if (exception != null) {
                     log.warn("Error while fixing offsets: {}", offsets, exception);
                 }
             });

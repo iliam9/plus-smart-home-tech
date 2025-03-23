@@ -8,6 +8,4 @@ import ru.yandex.practicum.model.ShoppingCartDto;
 public interface ShoppingCartMapper {
 
     ShoppingCartDto mapToShoppingCartDto(ShoppingCart shoppingCart);
-
-    ShoppingCart mapToShoppingCart(ShoppingCartDto shoppingCartDto);
 }

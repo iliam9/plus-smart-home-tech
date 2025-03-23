@@ -27,5 +27,4 @@ public class AddressDto {
 
     @NotBlank
     String flat;
-
 }

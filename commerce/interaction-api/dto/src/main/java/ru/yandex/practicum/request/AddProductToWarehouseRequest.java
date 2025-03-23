@@ -21,5 +21,4 @@ public class AddProductToWarehouseRequest {
 
     @DecimalMin(value = "1")
     int quantity;
-
 }

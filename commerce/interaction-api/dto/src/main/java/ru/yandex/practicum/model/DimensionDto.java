@@ -21,5 +21,4 @@ public class DimensionDto {
 
     @DecimalMin(value = "1")
     double depth;
-
 }

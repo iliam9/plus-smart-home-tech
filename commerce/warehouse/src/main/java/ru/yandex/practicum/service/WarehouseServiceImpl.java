@@ -10,7 +10,11 @@ import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouse;
 import ru.yandex.practicum.exception.SpecifiedProductAlreadyInWarehouseException;
 import ru.yandex.practicum.mapper.WarehouseProductMapper;
-import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.model.AddressDto;
+import ru.yandex.practicum.model.BookedProductsDto;
+import ru.yandex.practicum.model.QuantityState;
+import ru.yandex.practicum.model.ShoppingCartDto;
+import ru.yandex.practicum.model.WarehouseProduct;
 import ru.yandex.practicum.repository.WarehouseRepository;
 import ru.yandex.practicum.request.AddProductToWarehouseRequest;
 import ru.yandex.practicum.request.NewProductInWarehouseRequest;
@@ -25,7 +29,6 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
     private final WarehouseProductMapper warehouseProductMapper;
@@ -42,7 +45,6 @@ public class WarehouseServiceImpl implements WarehouseService {
                             "ADDRESS_2",
                             "ADDRESS_2",
                             "ADDRESS_2")};
-
     private static final AddressDto CURRENT_ADDRESS =
             ADDRESSES[Random.from(new SecureRandom()).nextInt(0, 1)];
 
@@ -75,11 +77,12 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookedProductsDto checkShoppingCart(ShoppingCartDto shoppingCart) {
         UUID shoppingCartId = shoppingCart.getShoppingCartId();
         Map<UUID, Integer> products = shoppingCart.getProducts();
-        Supplier<Stream<WarehouseProduct>> streamSupplier = () ->
-                warehouseRepository.findAllById(products.keySet()).stream();
+        Supplier<Stream<WarehouseProduct>> streamSupplier =
+                () -> warehouseRepository.findAllById(products.keySet()).stream();
         checkProductQuantity(streamSupplier.get(), products, shoppingCartId);
         BookedProductsDto bookedProductsDto = calculateDeliveryParams(streamSupplier);
         log.info("Delivery parameters for shopping cart ID: {} are calculated", shoppingCartId);
@@ -114,9 +117,11 @@ public class WarehouseServiceImpl implements WarehouseService {
         Double deliveryVolume = streamSupplier.get()
                 .map(product -> product.getWidth() * product.getHeight() * product.getDepth())
                 .reduce(0.0, Double::sum);
+
         Double deliveryWeight = streamSupplier.get()
                 .map(WarehouseProduct::getWeight)
                 .reduce(0.0, Double::sum);
+
         boolean isFragile = streamSupplier.get().anyMatch(WarehouseProduct::isFragile);
         return new BookedProductsDto(deliveryVolume, deliveryWeight, isFragile);
     }

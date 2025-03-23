@@ -12,10 +12,10 @@ import lombok.experimental.FieldDefaults;
 import java.util.UUID;
 
 @Entity
-@Table(name = "warehouse_product")
 @Getter
 @Setter
 @ToString
+@Table(name = "warehouse_product")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class WarehouseProduct {
 
@@ -33,5 +33,4 @@ public class WarehouseProduct {
     private boolean fragile;
 
     private int quantity;
-
 }

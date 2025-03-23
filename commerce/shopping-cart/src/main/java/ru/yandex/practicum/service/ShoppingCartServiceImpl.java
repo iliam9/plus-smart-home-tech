@@ -26,7 +26,6 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartMapper shoppingCartMapper;
@@ -46,6 +45,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ShoppingCartDto getUsersShoppingCart(String username) {
         validateUsername(username);
         ShoppingCart shoppingCart = getShoppingCart(username);
@@ -94,11 +94,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public BookedProductsDto bookProductFromShoppingCart(String username) {
         validateUsername(username);
         ShoppingCart shoppingCart = getShoppingCart(username);
+
         try {
             ShoppingCartDto shoppingCartDto = shoppingCartMapper.mapToShoppingCartDto(shoppingCart);
             BookedProductsDto bookedProductsDto = warehouseClient.checkShoppingCart(shoppingCartDto);
             log.info("Booked product from shopping cart ID: {}", shoppingCart.getShoppingCartId());
             return bookedProductsDto;
+
         } catch (FeignException e) {
             if (e.status() == 400) {
                 throw new ProductInShoppingCartNotInWarehouse(

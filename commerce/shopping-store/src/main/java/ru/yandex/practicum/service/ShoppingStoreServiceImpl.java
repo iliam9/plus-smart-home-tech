@@ -9,7 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.exception.ProductNotFoundException;
 import ru.yandex.practicum.mapper.ProductMapper;
-import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.model.Pageable;
+import ru.yandex.practicum.model.Product;
+import ru.yandex.practicum.model.ProductCategory;
+import ru.yandex.practicum.model.ProductDto;
+import ru.yandex.practicum.model.ProductState;
+import ru.yandex.practicum.model.QProduct;
 import ru.yandex.practicum.repository.ShoppingStoreRepository;
 import ru.yandex.practicum.request.SetProductQuantityStateRequest;
 
@@ -20,7 +25,6 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ShoppingStoreServiceImpl implements ShoppingStoreService {
     private final ShoppingStoreRepository productRepository;
@@ -62,7 +66,6 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
     }
 
     @Override
-    @Transactional
     public void setProductQuantityState(SetProductQuantityStateRequest request) {
         Product product = getProduct(request.getProductId());
         product.setQuantityState(request.getQuantityState());
@@ -71,6 +74,7 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<ProductDto> searchProducts(String category, Pageable params) {
         BooleanBuilder query = buildSearchQuery(category);
         Sort sort = createSort(params.getSort());
