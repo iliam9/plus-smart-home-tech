@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
     private final WarehouseProductMapper warehouseProductMapper;
@@ -50,7 +51,6 @@ public class WarehouseServiceImpl implements WarehouseService {
 
 
     @Override
-    @Transactional
     public void addNewProductToWarehouse(NewProductInWarehouseRequest request) {
         checkIfProductAlreadyInWarehouse(request.getProductId());
         WarehouseProduct product = warehouseProductMapper.mapToWarehouseProduct(request);
@@ -59,7 +59,6 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    @Transactional
     public void increaseProductQuantity(AddProductToWarehouseRequest request) {
         WarehouseProduct product = getWarehouseProduct(request.getProductId());
         int quantity = product.getQuantity();

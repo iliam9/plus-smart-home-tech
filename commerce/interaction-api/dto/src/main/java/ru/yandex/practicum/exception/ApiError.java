@@ -15,7 +15,7 @@ public class ApiError {
     private Throwable[] suppressed;
     private String localizedMessage;
 
-    public ApiError(HttpStatus httpStatus, Exception e, String userMessage) {
+    public ApiError(HttpStatus httpStatus, Throwable e, String userMessage) {
         this.cause = e.getCause();
         this.stackTrace = e.getStackTrace();
         this.httpStatus = httpStatus;

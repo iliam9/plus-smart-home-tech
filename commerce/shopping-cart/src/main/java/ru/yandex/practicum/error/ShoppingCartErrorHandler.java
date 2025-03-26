@@ -32,7 +32,7 @@ public class ShoppingCartErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiError handleThrowable(Exception exception) {
+    public ApiError handleThrowable(Throwable exception) {
         return new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, exception, "Unexpected error");
     }
 }
