@@ -15,6 +15,6 @@ spring:
       mode: always
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/smart
+    url: jdbc:postgresql://localhost:5432/warehouse
     username: user
     password: pass

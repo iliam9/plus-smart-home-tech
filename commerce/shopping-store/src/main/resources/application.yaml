@@ -1,6 +1,6 @@
 spring:
   application:
-    name: shoppingStore
+    name: shopping-store
   config:
     import: "configserver:"
     cloud:

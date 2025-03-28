@@ -34,12 +34,24 @@ services:
                              --bootstrap-server kafka:29092'"
     init: true
 
-  db:
-    image: postgres:16.1
-    container_name: smart-home-db
+  telemetry-db:
+    image: postgres:latest
+    container_name: telemetry-db
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=smart
+      - POSTGRES_USER=smart
       - POSTGRES_DB=smart
+
+  commerce-db:
+    image: postgres:latest
+    container_name: commerce-db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_PASSWORD=smart
+      - POSTGRES_USER=smart
+      - POSTGRES_MULTIPLE_DATABASES="shopping-store", "shopping-cart", warehouse
