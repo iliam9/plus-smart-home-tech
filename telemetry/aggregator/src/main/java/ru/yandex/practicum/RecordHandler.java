@@ -50,6 +50,7 @@ public class RecordHandler {
             return false;
         }
     }
+
     private boolean isOldStateBeforeAndDateNotEquals(SensorStateAvro oldState, SensorEventAvro event) {
         boolean isOldStateBefore = oldState.getTimestamp().isBefore(event.getTimestamp());
         boolean isDateEquals = oldState.getData().equals(event.getPayload());
