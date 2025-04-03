@@ -6,6 +6,9 @@ import ru.yandex.practicum.model.ShoppingCartDto;
 import ru.yandex.practicum.request.AddProductToWarehouseRequest;
 import ru.yandex.practicum.request.NewProductInWarehouseRequest;
 
+import java.util.Map;
+import java.util.UUID;
+
 public interface WarehouseService {
 
     void addNewProductToWarehouse(NewProductInWarehouseRequest request);
@@ -15,4 +18,6 @@ public interface WarehouseService {
     AddressDto getWarehouseAddress();
 
     BookedProductsDto checkShoppingCart(ShoppingCartDto shoppingCart);
+
+    void returnProductsToWarehouse(Map<UUID, Integer> products);
 }

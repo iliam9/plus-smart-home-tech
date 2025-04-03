@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.ShoppingStoreOperations;
+import ru.yandex.practicum.ShoppingStoreClient;
 import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouse;
 import ru.yandex.practicum.exception.SpecifiedProductAlreadyInWarehouseException;
@@ -20,6 +20,7 @@ import ru.yandex.practicum.request.AddProductToWarehouseRequest;
 import ru.yandex.practicum.request.NewProductInWarehouseRequest;
 
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -29,11 +30,10 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
     private final WarehouseProductMapper warehouseProductMapper;
-    private final ShoppingStoreOperations shoppingStoreOperations;
+    private final ShoppingStoreClient shoppingStoreClient;
     private static final AddressDto[] ADDRESSES =
             new AddressDto[]{
                     new AddressDto("ADDRESS_1",
@@ -51,6 +51,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
 
     @Override
+    @Transactional
     public void addNewProductToWarehouse(NewProductInWarehouseRequest request) {
         checkIfProductAlreadyInWarehouse(request.getProductId());
         WarehouseProduct product = warehouseProductMapper.mapToWarehouseProduct(request);
@@ -59,6 +60,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    @Transactional
     public void increaseProductQuantity(AddProductToWarehouseRequest request) {
         WarehouseProduct product = getWarehouseProduct(request.getProductId());
         int quantity = product.getQuantity();
@@ -86,6 +88,16 @@ public class WarehouseServiceImpl implements WarehouseService {
         BookedProductsDto bookedProductsDto = calculateDeliveryParams(streamSupplier);
         log.info("Delivery parameters for shopping cart ID: {} are calculated", shoppingCartId);
         return bookedProductsDto;
+    }
+
+    @Override
+    public void returnProductsToWarehouse(Map<UUID, Integer> products) {
+        List<AddProductToWarehouseRequest> requests = products.entrySet().stream()
+                .map(entry -> new AddProductToWarehouseRequest(entry.getKey(), entry.getValue()))
+                .toList();
+
+        requests.forEach(this::increaseProductQuantity);
+        log.info("Products returned to warehouse");
     }
 
     private WarehouseProduct getWarehouseProduct(UUID id) {
@@ -139,7 +151,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             quantityState = QuantityState.MANY;
         }
         try {
-            shoppingStoreOperations.updateProductQuantity(product.getProductId(), quantityState);
+            shoppingStoreClient.updateProductQuantity(product.getProductId(), quantityState);
         } catch (FeignException e) {
             log.error("Error updating product quantity in store", e);
         }

@@ -11,6 +11,5 @@ public interface WarehouseProductMapper {
     @Mapping(target = "width", source = "request.dimension.width")
     @Mapping(target = "height", source = "request.dimension.height")
     @Mapping(target = "depth", source = "request.dimension.depth")
-    @Mapping(target = "quantity", constant = "1000")
     WarehouseProduct mapToWarehouseProduct(NewProductInWarehouseRequest request);
 }

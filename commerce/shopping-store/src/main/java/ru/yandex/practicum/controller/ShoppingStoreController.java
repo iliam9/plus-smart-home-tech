@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.ShoppingStoreOperations;
+import ru.yandex.practicum.ShoppingStoreClient;
 import ru.yandex.practicum.model.Pageable;
 import ru.yandex.practicum.model.ProductDto;
 import ru.yandex.practicum.model.QuantityState;
@@ -25,7 +25,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/shopping-store")
-public class ShoppingStoreController implements ShoppingStoreOperations {
+public class ShoppingStoreController implements ShoppingStoreClient {
     private final ShoppingStoreService shoppingStoreService;
 
     @PutMapping

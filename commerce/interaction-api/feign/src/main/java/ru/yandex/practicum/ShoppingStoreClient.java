@@ -11,7 +11,7 @@ import java.util.UUID;
 
 
 @FeignClient(name = "shopping-store", path = "/api/v1/shopping-store")
-public interface ShoppingStoreOperations {
+public interface ShoppingStoreClient {
 
     @PostMapping("/quantityState")
     void updateProductQuantity(@RequestParam UUID productId,

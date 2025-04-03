@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.WarehouseOperations;
+import ru.yandex.practicum.WarehouseClient;
 import ru.yandex.practicum.model.AddressDto;
 import ru.yandex.practicum.model.BookedProductsDto;
 import ru.yandex.practicum.model.ShoppingCartDto;
@@ -17,11 +17,14 @@ import ru.yandex.practicum.request.AddProductToWarehouseRequest;
 import ru.yandex.practicum.request.NewProductInWarehouseRequest;
 import ru.yandex.practicum.service.WarehouseService;
 
+import java.util.Map;
+import java.util.UUID;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/warehouse")
-public class WarehouseController implements WarehouseOperations {
+public class WarehouseController implements WarehouseClient {
     private final WarehouseService warehouseService;
 
     @PutMapping
@@ -46,5 +49,11 @@ public class WarehouseController implements WarehouseOperations {
     public BookedProductsDto checkShoppingCart(ShoppingCartDto shoppingCartDto) throws FeignException {
         log.info("Received request to check shopping cart ID: {}", shoppingCartDto.getShoppingCartId());
         return warehouseService.checkShoppingCart(shoppingCartDto);
+    }
+
+    @Override
+    public void returnProducts(Map<UUID, Integer> products) throws FeignException {
+        log.info("Received request ro return products to warehouse: {}", products);
+        warehouseService.returnProductsToWarehouse(products);
     }
 }

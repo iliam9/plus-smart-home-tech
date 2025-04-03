@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.WarehouseOperations;
+import ru.yandex.practicum.WarehouseClient;
 import ru.yandex.practicum.exception.NotAuthorizedUserException;
 import ru.yandex.practicum.exception.ProductInShoppingCartNotInWarehouse;
 import ru.yandex.practicum.mapper.ShoppingCartMapper;
@@ -29,7 +29,7 @@ import java.util.UUID;
 public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartMapper shoppingCartMapper;
-    private final WarehouseOperations warehouseClient;
+    private final WarehouseClient warehouseClient;
 
     @Override
     @Transactional
