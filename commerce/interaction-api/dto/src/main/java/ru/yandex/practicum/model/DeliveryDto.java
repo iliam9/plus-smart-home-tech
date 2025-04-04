@@ -13,17 +13,20 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PaymentDto {
+public class DeliveryDto {
 
     @NotNull
-    UUID paymentId;
+    UUID deliveryId;
 
     @NotNull
-    Double totalPayment;
+    AddressDto fromAddress;
 
     @NotNull
-    Double deliveryTotal;
+    AddressDto toAddress;
 
     @NotNull
-    Double feeTotal;
+    UUID orderId;
+
+    @NotNull
+    DeliveryState deliveryState;
 }
