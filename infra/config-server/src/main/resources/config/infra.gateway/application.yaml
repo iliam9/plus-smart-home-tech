@@ -22,6 +22,12 @@ spring:
             - Path=/shopping-store/**
           filters:
             - PrefixPath=/api/v1
+        - id: warehouse_service_route
+          uri: lb://warehouse
+          predicates:
+            - Path=/warehouse/**
+          filters:
+            - PrefixPath=/api/v1
         - id: order_service_route
           uri: lb://order
           predicates:
