@@ -3,7 +3,6 @@ package ru.yandex.practicum.controller;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +13,9 @@ import ru.yandex.practicum.model.AddressDto;
 import ru.yandex.practicum.model.BookedProductsDto;
 import ru.yandex.practicum.model.ShoppingCartDto;
 import ru.yandex.practicum.request.AddProductToWarehouseRequest;
+import ru.yandex.practicum.request.AssemblyProductsForOrderRequest;
 import ru.yandex.practicum.request.NewProductInWarehouseRequest;
+import ru.yandex.practicum.request.ShippedToDeliveryRequest;
 import ru.yandex.practicum.service.WarehouseService;
 
 import java.util.Map;
@@ -39,10 +40,22 @@ public class WarehouseController implements WarehouseClient {
         warehouseService.increaseProductQuantity(request);
     }
 
-    @GetMapping("/address")
+    @Override
     public AddressDto getWarehouseAddress() {
         log.info("Received request to get closest warehouse address");
         return warehouseService.getWarehouseAddress();
+    }
+
+    @Override
+    public void shippedToDelivery(ShippedToDeliveryRequest request) throws FeignException {
+        log.info("Received request to ship products to delivery");
+        warehouseService.shipToDelivery(request);
+    }
+
+    @Override
+    public BookedProductsDto assemblyProductsForOrder(AssemblyProductsForOrderRequest request) throws FeignException {
+        log.info("Received request to assembly products for order: {}", request);
+        return warehouseService.assemblyProducts(request);
     }
 
     @Override

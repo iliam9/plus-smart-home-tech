@@ -5,6 +5,7 @@ import ru.yandex.practicum.request.CreateNewOrderRequest;
 import ru.yandex.practicum.request.ProductReturnRequest;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public interface OrderService {
 
@@ -13,4 +14,10 @@ public interface OrderService {
     Collection<OrderDto> getUsersOrders(String username);
 
     OrderDto returnOrderProducts(ProductReturnRequest request);
+
+    OrderDto orderDeliverySuccessful(UUID orderId);
+
+    OrderDto orderDeliveryFailed(UUID orderId);
+
+    OrderDto setOrderDeliveryInProgress(UUID orderId);
 }

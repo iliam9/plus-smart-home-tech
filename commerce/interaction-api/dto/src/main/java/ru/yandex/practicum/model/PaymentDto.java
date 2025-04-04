@@ -26,4 +26,6 @@ public class PaymentDto {
 
     @NotNull
     Double feeTotal;
+
+    PaymentState paymentState;
 }

@@ -15,10 +15,8 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DeliveryDto {
 
-    @NotNull
     UUID deliveryId;
 
-    @NotNull
     AddressDto fromAddress;
 
     @NotNull
@@ -27,6 +25,5 @@ public class DeliveryDto {
     @NotNull
     UUID orderId;
 
-    @NotNull
     DeliveryState deliveryState;
 }

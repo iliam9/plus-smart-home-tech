@@ -9,15 +9,15 @@ import ru.yandex.practicum.ShoppingStoreClient;
 import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouse;
 import ru.yandex.practicum.exception.SpecifiedProductAlreadyInWarehouseException;
+import ru.yandex.practicum.mapper.BookingMapper;
 import ru.yandex.practicum.mapper.WarehouseProductMapper;
-import ru.yandex.practicum.model.AddressDto;
-import ru.yandex.practicum.model.BookedProductsDto;
-import ru.yandex.practicum.model.QuantityState;
-import ru.yandex.practicum.model.ShoppingCartDto;
-import ru.yandex.practicum.model.WarehouseProduct;
+import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.repository.BookingRepository;
 import ru.yandex.practicum.repository.WarehouseRepository;
 import ru.yandex.practicum.request.AddProductToWarehouseRequest;
+import ru.yandex.practicum.request.AssemblyProductsForOrderRequest;
 import ru.yandex.practicum.request.NewProductInWarehouseRequest;
+import ru.yandex.practicum.request.ShippedToDeliveryRequest;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -32,7 +32,9 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
+    private final BookingRepository bookingRepository;
     private final WarehouseProductMapper warehouseProductMapper;
+    private final BookingMapper bookingMapper;
     private final ShoppingStoreClient shoppingStoreClient;
     private static final AddressDto[] ADDRESSES =
             new AddressDto[]{
@@ -84,7 +86,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Map<UUID, Integer> products = shoppingCart.getProducts();
         Supplier<Stream<WarehouseProduct>> streamSupplier =
                 () -> warehouseRepository.findAllById(products.keySet()).stream();
-        checkProductQuantity(streamSupplier.get(), products, shoppingCartId);
+        checkProductQuantity(streamSupplier.get(), products);
         BookedProductsDto bookedProductsDto = calculateDeliveryParams(streamSupplier);
         log.info("Delivery parameters for shopping cart ID: {} are calculated", shoppingCartId);
         return bookedProductsDto;
@@ -98,6 +100,30 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         requests.forEach(this::increaseProductQuantity);
         log.info("Products returned to warehouse");
+    }
+
+    @Override
+    @Transactional
+    public BookedProductsDto assemblyProducts(AssemblyProductsForOrderRequest request) {
+        Map<UUID, Integer> products = request.getProducts();
+        Supplier<Stream<WarehouseProduct>> streamSupplier =
+                () -> warehouseRepository.findAllById(products.keySet()).stream();
+        checkProductQuantity(streamSupplier.get(), products);
+        BookedProductsDto bookedProductsParams = calculateDeliveryParams(streamSupplier);
+        decreaseProductQuantityAfterBooking(products);
+
+        Booking booking = bookingMapper.mapToBooking(bookedProductsParams, request);
+        booking = bookingRepository.save(booking);
+        log.info("Products booked for delivery: {}", booking);
+        return bookingMapper.mapToBookingDto(booking);
+    }
+
+    @Override
+    public void shipToDelivery(ShippedToDeliveryRequest request) {
+        Booking booking = bookingRepository.findByOrderId(request.getOrderId());
+        booking.setDeliveryId(request.getDeliveryId());
+        bookingRepository.save(booking);
+        log.info("Products shipped for delivery");
     }
 
     private WarehouseProduct getWarehouseProduct(UUID id) {
@@ -115,12 +141,10 @@ public class WarehouseServiceImpl implements WarehouseService {
                 });
     }
 
-    private void checkProductQuantity(Stream<WarehouseProduct> stream, Map<UUID, Integer> products, UUID cartId) {
+    private void checkProductQuantity(Stream<WarehouseProduct> stream, Map<UUID, Integer> products) {
         if (stream.anyMatch(product -> product.getQuantity() < products.get(product.getProductId()))) {
-            log.error("Quantity of products is less than necessary for shopping cart ID: {}", cartId);
-            throw new ProductInShoppingCartLowQuantityInWarehouse(
-                    String.format("Quantity of products is less than necessary for shopping cart ID: %s", cartId)
-            );
+            log.error("Quantity of products is less than necessary");
+            throw new ProductInShoppingCartLowQuantityInWarehouse("Quantity of products is less than necessary");
         }
     }
 
@@ -134,7 +158,12 @@ public class WarehouseServiceImpl implements WarehouseService {
                 .reduce(0.0, Double::sum);
 
         boolean isFragile = streamSupplier.get().anyMatch(WarehouseProduct::isFragile);
-        return new BookedProductsDto(deliveryVolume, deliveryWeight, isFragile);
+
+        BookedProductsDto productsDto = new BookedProductsDto();
+        productsDto.setDeliveryVolume(deliveryVolume);
+        productsDto.setDeliveryWeight(deliveryWeight);
+        productsDto.setFragile(isFragile);
+        return productsDto;
     }
 
     private void updateQuantityInShoppingStore(WarehouseProduct product) {
@@ -155,5 +184,16 @@ public class WarehouseServiceImpl implements WarehouseService {
         } catch (FeignException e) {
             log.error("Error updating product quantity in store", e);
         }
+    }
+
+    private void decreaseProductQuantityAfterBooking(Map<UUID, Integer> products) {
+        products.forEach((key, value) -> {
+            WarehouseProduct product = getWarehouseProduct(key);
+            int oldQuantity = product.getQuantity();
+            int decreasingQuantity = value;
+            product.setQuantity(oldQuantity - decreasingQuantity);
+            warehouseRepository.save(product);
+            updateQuantityInShoppingStore(product);
+        });
     }
 }
