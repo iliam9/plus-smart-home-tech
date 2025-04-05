@@ -29,6 +29,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
     private final ShoppingStoreClient shoppingStoreClient;
     private final OrderClient orderClient;
+    private static final double VAT_RATE = 0.20;
 
     @Override
     @Transactional
@@ -60,7 +61,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public double calculateTotalCost(OrderDto order) {
         validatePaymentInfo(order.getProductPrice(), order.getDeliveryPrice());
-        final double VAT_RATE = 0.20;
         double productsPrice = order.getProductPrice();
         double deliveryPrice = order.getDeliveryPrice();
         double totalCost = deliveryPrice + productsPrice + (productsPrice * VAT_RATE);

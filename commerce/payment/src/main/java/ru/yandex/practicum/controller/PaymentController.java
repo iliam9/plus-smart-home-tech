@@ -3,8 +3,6 @@ package ru.yandex.practicum.controller;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.PaymentClient;
@@ -39,14 +37,14 @@ public class PaymentController implements PaymentClient {
         return paymentService.calculateTotalCost(order);
     }
 
-    @PostMapping("/refund")
-    public void setPaymentSuccessful(@RequestBody UUID paymentId) {
+    @Override
+    public void setPaymentSuccessful(UUID paymentId) throws FeignException {
         log.info("Received request to set payment with ID:{} successful", paymentId);
         paymentService.setPaymentSuccessful(paymentId);
     }
 
-    @PostMapping("/failed")
-    public void setPaymentFailed(@RequestBody UUID paymentId) {
+    @Override
+    public void setPaymentFailed(UUID paymentId) throws FeignException {
         log.info("Received request to set payment with ID:{} failed", paymentId);
         paymentService.setPaymentFailed(paymentId);
     }

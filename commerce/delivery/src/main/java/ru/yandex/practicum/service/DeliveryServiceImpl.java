@@ -27,6 +27,14 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final OrderClient orderClient;
     private final WarehouseClient warehouseClient;
 
+    private static final double BASE_RATE = 5.0;
+    private static final double WAREHOUSE_1_ADDRESS_MULTIPLIER = 1;
+    private static final double WAREHOUSE_2_ADDRESS_MULTIPLIER = 2;
+    private static final double FRAGILE_MULTIPLIER = 0.2;
+    private static final double WEIGHT_MULTIPLIER = 0.3;
+    private static final double VOLUME_MULTIPLIER = 0.2;
+    private static final double STREET_MULTIPLIER = 0.2;
+
     @Override
     @Transactional
     public DeliveryDto createDelivery(DeliveryDto deliveryDto) {
@@ -60,14 +68,6 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public Double calculateDeliveryCost(OrderDto order) {
-        final double BASE_RATE = 5.0;
-        final double WAREHOUSE_1_ADDRESS_MULTIPLIER = 1;
-        final double WAREHOUSE_2_ADDRESS_MULTIPLIER = 2;
-        final double FRAGILE_MULTIPLIER = 0.2;
-        final double WEIGHT_MULTIPLIER = 0.3;
-        final double VOLUME_MULTIPLIER = 0.2;
-        final double STREET_MULTIPLIER = 0.2;
-
         Delivery delivery = getDelivery(order.getDeliveryId());
         Address warehouseAddress = delivery.getFromAddress();
         Address destinationAddress = delivery.getToAddress();
