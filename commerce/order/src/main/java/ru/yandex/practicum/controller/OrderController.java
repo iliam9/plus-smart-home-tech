@@ -52,9 +52,21 @@ public class OrderController implements OrderClient {
     }
 
     @Override
-    public OrderDto orderDeliveryAssembled(UUID orderId) throws FeignException {
+    public OrderDto assembly(UUID orderId) throws FeignException {
         log.info("Received request to set order status with ID:{} picked in delivery", orderId);
         return orderService.setOrderDeliveryInProgress(orderId);
+    }
+
+    @Override
+    public OrderDto assemblyFailed(UUID orderId) throws FeignException {
+        log.info("Received request to set order status with ID:{} assembly failed", orderId);
+        return orderService.setOrderDeliveryAssemblyFailed(orderId);
+    }
+
+    @PostMapping("/payment")
+    public OrderDto createOrderPayment(UUID orderId) {
+        log.info("Received request to create payment order with ID:{} paid", orderId);
+        return orderService.createOrderPayment(orderId);
     }
 
     @Override
@@ -67,5 +79,29 @@ public class OrderController implements OrderClient {
     public OrderDto paymentFailed(UUID orderId) throws FeignException {
         log.info("Received request to set order status with ID:{} payment failed", orderId);
         return orderService.setOrderPaymentFailed(orderId);
+    }
+
+    @PostMapping("/completed")
+    public OrderDto completeOrder(@RequestBody UUID orderId) {
+        log.info("Received request to set order status with ID:{} completed", orderId);
+        return orderService.completeOrder(orderId);
+    }
+
+    @PostMapping("/calculate/productCost")
+    public OrderDto calculateProductCost(@RequestBody UUID orderId) {
+        log.info("Received request to calculate product cost for order with ID:{}", orderId);
+        return orderService.calculateProductCost(orderId);
+    }
+
+    @PostMapping("/calculate/delivery")
+    public OrderDto calculateDeliveryCost(@RequestBody UUID orderId) {
+        log.info("Received request to calculate delivery for order with ID:{}", orderId);
+        return orderService.calculateDeliveryCost(orderId);
+    }
+
+    @PostMapping("/calculate/total")
+    public OrderDto calculateTotalCost(@RequestBody UUID orderId) {
+        log.info("Received request to calculate total cost for order with ID:{}", orderId);
+        return orderService.calculateTotalCost(orderId);
     }
 }

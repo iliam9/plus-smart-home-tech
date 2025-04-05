@@ -26,10 +26,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     @Transactional
     public DeliveryDto createDelivery(DeliveryDto deliveryDto) {
-        AddressDto warehouseAddress = warehouseClient.getWarehouseAddress();
-        deliveryDto.setFromAddress(warehouseAddress);
         Delivery delivery = deliveryMapper.mapToDelivery(deliveryDto);
-        delivery.setDeliveryState(DeliveryState.CREATED);
         delivery = deliveryRepository.save(delivery);
         log.info("New delivery is created: {}", delivery);
         return deliveryMapper.mapToDeliveryDto(delivery);
@@ -95,7 +92,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = getDelivery(deliveryId);
         UUID orderId = delivery.getOrderId();
         delivery.setDeliveryState(DeliveryState.IN_PROGRESS);
-        orderClient.orderDeliveryAssembled(orderId);
+        orderClient.assembly(orderId);
         warehouseClient.shippedToDelivery(new ShippedToDeliveryRequest(orderId, deliveryId));
         delivery = deliveryRepository.save(delivery);
         log.info("Delivery with ID:{} is in progress", deliveryId);

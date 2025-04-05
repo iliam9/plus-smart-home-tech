@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.OrderClient;
 import ru.yandex.practicum.ShoppingStoreClient;
+import ru.yandex.practicum.WarehouseClient;
 import ru.yandex.practicum.exception.NoPaymentFoundException;
 import ru.yandex.practicum.exception.NotEnoughInfoInOrderToCalculateException;
 import ru.yandex.practicum.mapper.PaymentMapper;
@@ -57,7 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public double calculateTotalCost(OrderDto order) {
-        validatePaymentInfo(order.getProductPrice(), order.getProductPrice());
+        validatePaymentInfo(order.getProductPrice(), order.getDeliveryPrice());
 
         final double VAT_RATE = 0.20;
         double productsPrice = order.getProductPrice();

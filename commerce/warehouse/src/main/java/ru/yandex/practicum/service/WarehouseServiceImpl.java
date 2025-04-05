@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.OrderClient;
 import ru.yandex.practicum.ShoppingStoreClient;
 import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouse;
@@ -36,6 +37,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseProductMapper warehouseProductMapper;
     private final BookingMapper bookingMapper;
     private final ShoppingStoreClient shoppingStoreClient;
+    private final OrderClient orderClient;
     private static final AddressDto[] ADDRESSES =
             new AddressDto[]{
                     new AddressDto("ADDRESS_1",
@@ -108,10 +110,16 @@ public class WarehouseServiceImpl implements WarehouseService {
         Map<UUID, Integer> products = request.getProducts();
         Supplier<Stream<WarehouseProduct>> streamSupplier =
                 () -> warehouseRepository.findAllById(products.keySet()).stream();
-        checkProductQuantity(streamSupplier.get(), products);
+
+        try {
+            checkProductQuantity(streamSupplier.get(), products);
+        } catch (ProductInShoppingCartLowQuantityInWarehouse exception) {
+            orderClient.assemblyFailed(request.getOrderId());
+            throw exception;
+        }
+
         BookedProductsDto bookedProductsParams = calculateDeliveryParams(streamSupplier);
         decreaseProductQuantityAfterBooking(products);
-
         Booking booking = bookingMapper.mapToBooking(bookedProductsParams, request);
         booking = bookingRepository.save(booking);
         log.info("Products booked for delivery: {}", booking);
