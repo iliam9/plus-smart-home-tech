@@ -4,7 +4,13 @@ import feign.FeignException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.OrderClient;
 import ru.yandex.practicum.model.OrderDto;
 import ru.yandex.practicum.request.CreateNewOrderRequest;
@@ -34,7 +40,7 @@ public class OrderController implements OrderClient {
     }
 
     @PostMapping("/return")
-    public OrderDto returnOrderProducts(@RequestBody ProductReturnRequest request) {
+    public OrderDto returnOrderProducts(@RequestBody @Valid ProductReturnRequest request) {
         log.info("Received request to return order products: {}", request);
         return orderService.returnOrderProducts(request);
     }
@@ -42,17 +48,17 @@ public class OrderController implements OrderClient {
     @Override
     public OrderDto deliverySuccessful(UUID orderId) throws FeignException {
         log.info("Received request to set order delivery successful");
-        return orderService.orderDeliverySuccessful(orderId);
+        return orderService.setOrderDeliverySuccessful(orderId);
     }
 
     @Override
     public OrderDto deliveryFailed(UUID orderId) throws FeignException {
         log.info("Received request to set delivery for order with ID:{} failed", orderId);
-        return orderService.orderDeliveryFailed(orderId);
+        return orderService.setOrderDeliveryFailed(orderId);
     }
 
     @Override
-    public OrderDto assembly(UUID orderId) throws FeignException {
+    public OrderDto assemblySuccessful(UUID orderId) throws FeignException {
         log.info("Received request to set order status with ID:{} picked in delivery", orderId);
         return orderService.setOrderDeliveryInProgress(orderId);
     }
@@ -64,7 +70,7 @@ public class OrderController implements OrderClient {
     }
 
     @PostMapping("/payment")
-    public OrderDto createOrderPayment(UUID orderId) {
+    public OrderDto createOrderPayment(@RequestBody UUID orderId) {
         log.info("Received request to create payment order with ID:{} paid", orderId);
         return orderService.createOrderPayment(orderId);
     }
@@ -79,12 +85,6 @@ public class OrderController implements OrderClient {
     public OrderDto paymentFailed(UUID orderId) throws FeignException {
         log.info("Received request to set order status with ID:{} payment failed", orderId);
         return orderService.setOrderPaymentFailed(orderId);
-    }
-
-    @PostMapping("/completed")
-    public OrderDto completeOrder(@RequestBody UUID orderId) {
-        log.info("Received request to set order status with ID:{} completed", orderId);
-        return orderService.completeOrder(orderId);
     }
 
     @PostMapping("/calculate/productCost")
@@ -103,5 +103,11 @@ public class OrderController implements OrderClient {
     public OrderDto calculateTotalCost(@RequestBody UUID orderId) {
         log.info("Received request to calculate total cost for order with ID:{}", orderId);
         return orderService.calculateTotalCost(orderId);
+    }
+
+    @PostMapping("/completed")
+    public OrderDto completeOrder(@RequestBody UUID orderId) {
+        log.info("Received request to set order status with ID:{} completed", orderId);
+        return orderService.completeOrder(orderId);
     }
 }

@@ -18,7 +18,7 @@ public interface OrderClient {
     OrderDto deliveryFailed(@RequestBody UUID orderId) throws FeignException;
 
     @PostMapping("/delivery/assembly")
-    OrderDto assembly(@RequestBody UUID orderId) throws FeignException;
+    OrderDto assemblySuccessful(@RequestBody UUID orderId) throws FeignException;
 
     @PostMapping("/delivery/assembly/failed")
     OrderDto assemblyFailed(@RequestBody UUID orderId) throws FeignException;

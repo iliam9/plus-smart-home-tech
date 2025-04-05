@@ -1,5 +1,6 @@
 package ru.yandex.practicum.controller;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,19 +22,19 @@ public class PaymentController implements PaymentClient {
     private final PaymentService paymentService;
 
     @Override
-    public PaymentDto createPayment(OrderDto order) {
+    public PaymentDto createPayment(OrderDto order) throws FeignException {
         log.info("Received request to create payment for order with ID:{}", order.getOrderId());
         return paymentService.createPayment(order);
     }
 
     @Override
-    public double calculateProductCost(OrderDto order) {
+    public double calculateProductCost(OrderDto order) throws FeignException {
         log.info("Received request to calculate product cost for order with ID:{}", order.getOrderId());
         return paymentService.calculateProductCost(order);
     }
 
     @Override
-    public double calculateTotalCost(OrderDto order) {
+    public double calculateTotalCost(OrderDto order) throws FeignException {
         log.info("Received request to calculate total cost for order with ID:{}", order.getOrderId());
         return paymentService.calculateTotalCost(order);
     }

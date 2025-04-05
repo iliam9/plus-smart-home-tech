@@ -19,8 +19,10 @@ public class OrderDto {
     @NotNull
     UUID orderId;
 
+    @NotNull
     String username;
 
+    @NotNull
     UUID shoppingCartId;
 
     @NotNull
@@ -30,6 +32,7 @@ public class OrderDto {
 
     UUID deliveryId;
 
+    @NotNull
     OrderState state;
 
     Double deliveryWeight;

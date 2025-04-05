@@ -15,9 +15,9 @@ public interface OrderService {
 
     OrderDto returnOrderProducts(ProductReturnRequest request);
 
-    OrderDto orderDeliverySuccessful(UUID orderId);
+    OrderDto setOrderDeliverySuccessful(UUID orderId);
 
-    OrderDto orderDeliveryFailed(UUID orderId);
+    OrderDto setOrderDeliveryFailed(UUID orderId);
 
     OrderDto setOrderDeliveryInProgress(UUID orderId);
 

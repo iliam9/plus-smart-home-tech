@@ -10,7 +10,14 @@ import ru.yandex.practicum.WarehouseClient;
 import ru.yandex.practicum.exception.NoOrderFoundException;
 import ru.yandex.practicum.exception.NotAuthorizedUserException;
 import ru.yandex.practicum.mapper.OrderMapper;
-import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.model.AddressDto;
+import ru.yandex.practicum.model.BookedProductsDto;
+import ru.yandex.practicum.model.DeliveryDto;
+import ru.yandex.practicum.model.DeliveryState;
+import ru.yandex.practicum.model.Order;
+import ru.yandex.practicum.model.OrderDto;
+import ru.yandex.practicum.model.OrderState;
+import ru.yandex.practicum.model.PaymentDto;
 import ru.yandex.practicum.repository.OrderRepository;
 import ru.yandex.practicum.request.AssemblyProductsForOrderRequest;
 import ru.yandex.practicum.request.CreateNewOrderRequest;
@@ -74,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto orderDeliverySuccessful(UUID orderId) {
+    public OrderDto setOrderDeliverySuccessful(UUID orderId) {
         Order order = getOrder(orderId);
         order.setState(OrderState.DELIVERED);
         orderRepository.save(order);
@@ -84,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto orderDeliveryFailed(UUID orderId) {
+    public OrderDto setOrderDeliveryFailed(UUID orderId) {
         Order order = getOrder(orderId);
         order.setState(OrderState.DELIVERY_FAILED);
         orderRepository.save(order);
@@ -96,10 +103,14 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto setOrderDeliveryInProgress(UUID orderId) {
         Order order = getOrder(orderId);
-        AssemblyProductsForOrderRequest assemblyProductsForOrderRequest =
-                new AssemblyProductsForOrderRequest(order.getOrderId(), order.getProducts());
-        warehouseClient.assemblyProductsForOrder(assemblyProductsForOrderRequest);
-        order.setState(OrderState.ON_DELIVERY);
+
+        AssemblyProductsForOrderRequest request = AssemblyProductsForOrderRequest.builder()
+                .orderId(order.getOrderId())
+                .products(order.getProducts())
+                .build();
+        warehouseClient.assemblyProductsForOrder(request);
+
+        order.setState(OrderState.ASSEMBLED);
         order = orderRepository.save(order);
         log.info("Delivery for order with ID:{} was picked up", orderId);
         return orderMapper.mapToOrderDto(order);
@@ -145,6 +156,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderDto calculateProductCost(UUID orderId) {
         Order order = getOrder(orderId);
         double productPrice = paymentClient.calculateProductCost(orderMapper.mapToOrderDto(order));

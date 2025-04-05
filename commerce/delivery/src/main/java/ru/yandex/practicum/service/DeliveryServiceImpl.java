@@ -8,7 +8,11 @@ import ru.yandex.practicum.OrderClient;
 import ru.yandex.practicum.WarehouseClient;
 import ru.yandex.practicum.exception.NoDeliveryFoundException;
 import ru.yandex.practicum.mapper.DeliveryMapper;
-import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.model.Address;
+import ru.yandex.practicum.model.Delivery;
+import ru.yandex.practicum.model.DeliveryDto;
+import ru.yandex.practicum.model.DeliveryState;
+import ru.yandex.practicum.model.OrderDto;
 import ru.yandex.practicum.repository.DeliveryRepository;
 import ru.yandex.practicum.request.ShippedToDeliveryRequest;
 
@@ -92,8 +96,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = getDelivery(deliveryId);
         UUID orderId = delivery.getOrderId();
         delivery.setDeliveryState(DeliveryState.IN_PROGRESS);
-        orderClient.assembly(orderId);
         warehouseClient.shippedToDelivery(new ShippedToDeliveryRequest(orderId, deliveryId));
+        orderClient.assemblySuccessful(orderId);
         delivery = deliveryRepository.save(delivery);
         log.info("Delivery with ID:{} is in progress", deliveryId);
         return deliveryMapper.mapToDeliveryDto(delivery);

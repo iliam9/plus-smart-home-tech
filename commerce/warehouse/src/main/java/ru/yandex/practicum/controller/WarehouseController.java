@@ -1,6 +1,7 @@
 package ru.yandex.practicum.controller;
 
 import feign.FeignException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,19 +30,19 @@ public class WarehouseController implements WarehouseClient {
     private final WarehouseService warehouseService;
 
     @PutMapping
-    public void addProductToWarehouse(@RequestBody NewProductInWarehouseRequest request) {
+    public void addProductToWarehouse(@RequestBody @Valid NewProductInWarehouseRequest request) {
         log.info("Received request to add new product in warehouse: {}", request);
         warehouseService.addNewProductToWarehouse(request);
     }
 
     @PostMapping("/add")
-    public void increaseProductQuantity(@RequestBody AddProductToWarehouseRequest request) {
+    public void increaseProductQuantity(@RequestBody @Valid AddProductToWarehouseRequest request) {
         log.info("Received request to increase product quantity of product with ID: {}", request.getProductId());
         warehouseService.increaseProductQuantity(request);
     }
 
     @Override
-    public AddressDto getWarehouseAddress() {
+    public AddressDto getWarehouseAddress() throws FeignException {
         log.info("Received request to get closest warehouse address");
         return warehouseService.getWarehouseAddress();
     }

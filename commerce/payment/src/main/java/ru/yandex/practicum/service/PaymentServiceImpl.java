@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.OrderClient;
 import ru.yandex.practicum.ShoppingStoreClient;
-import ru.yandex.practicum.WarehouseClient;
 import ru.yandex.practicum.exception.NoPaymentFoundException;
 import ru.yandex.practicum.exception.NotEnoughInfoInOrderToCalculateException;
 import ru.yandex.practicum.mapper.PaymentMapper;
@@ -42,6 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public double calculateProductCost(OrderDto order) {
         List<Double> pricesList = new ArrayList<>();
         Map<UUID, Integer> orderProducts = order.getProducts();
@@ -51,6 +51,7 @@ public class PaymentServiceImpl implements PaymentService {
             double totalProductPrice = product.getPrice() * quantity;
             pricesList.add(totalProductPrice);
         });
+
         double totalProductCost = pricesList.stream().mapToDouble(Double::doubleValue).sum();
         log.info("Total product cost is calculated: {}", totalProductCost);
         return totalProductCost;
@@ -59,11 +60,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public double calculateTotalCost(OrderDto order) {
         validatePaymentInfo(order.getProductPrice(), order.getDeliveryPrice());
-
         final double VAT_RATE = 0.20;
         double productsPrice = order.getProductPrice();
         double deliveryPrice = order.getDeliveryPrice();
-
         double totalCost = deliveryPrice + productsPrice + (productsPrice * VAT_RATE);
         log.info("Total cost is calculated: {}", totalCost);
         return totalCost;
@@ -80,6 +79,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public void setPaymentFailed(UUID paymentId) {
         Payment payment = getPayment(paymentId);
         payment.setPaymentState(PaymentState.FAILED);

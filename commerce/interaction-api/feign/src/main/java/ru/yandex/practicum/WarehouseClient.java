@@ -1,6 +1,7 @@
 package ru.yandex.practicum;
 
 import feign.FeignException;
+import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +18,7 @@ import java.util.UUID;
 public interface WarehouseClient {
 
     @PostMapping("/check")
-    BookedProductsDto checkShoppingCart(@RequestBody ShoppingCartDto shoppingCartDto) throws FeignException;
+    BookedProductsDto checkShoppingCart(@RequestBody @Valid ShoppingCartDto shoppingCartDto) throws FeignException;
 
     @PostMapping("/return")
     void returnProducts(@RequestBody Map<UUID, Integer> products) throws FeignException;
@@ -26,8 +27,8 @@ public interface WarehouseClient {
     AddressDto getWarehouseAddress() throws FeignException;
 
     @PostMapping("/assembly")
-    BookedProductsDto assemblyProductsForOrder(@RequestBody AssemblyProductsForOrderRequest request) throws FeignException;
+    BookedProductsDto assemblyProductsForOrder(@RequestBody @Valid AssemblyProductsForOrderRequest request) throws FeignException;
 
     @PostMapping("/shipped")
-    void shippedToDelivery(ShippedToDeliveryRequest request);
+    void shippedToDelivery(@RequestBody @Valid ShippedToDeliveryRequest request);
 }
