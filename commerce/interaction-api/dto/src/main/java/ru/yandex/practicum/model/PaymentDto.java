@@ -19,6 +19,9 @@ public class PaymentDto {
     UUID paymentId;
 
     @NotNull
+    UUID orderId;
+
+    @NotNull
     Double totalPayment;
 
     @NotNull

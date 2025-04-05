@@ -34,8 +34,8 @@ public class ShoppingStoreController implements ShoppingStoreClient {
         return shoppingStoreService.addProduct(product);
     }
 
-    @GetMapping("/{id}")
-    public ProductDto getProductById(@PathVariable UUID id) {
+    @Override
+    public ProductDto getProductById(UUID id) {
         log.info("Received request to get product by ID: {}", id);
         return shoppingStoreService.findProductById(id);
     }

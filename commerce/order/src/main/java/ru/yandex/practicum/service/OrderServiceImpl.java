@@ -94,6 +94,24 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.mapToOrderDto(order);
     }
 
+    @Override
+    public OrderDto setOrderPaid(UUID orderId) {
+        Order order = getOrder(orderId);
+        order.setState(OrderState.PAID);
+        order = orderRepository.save(order);
+        log.info("Order with ID:{} was successfully paid", orderId);
+        return orderMapper.mapToOrderDto(order);
+    }
+
+    @Override
+    public OrderDto setOrderPaymentFailed(UUID orderId) {
+        Order order = getOrder(orderId);
+        order.setState(OrderState.PAYMENT_FAILED);
+        order = orderRepository.save(order);
+        log.info("Payment for order with ID:{} was failed", orderId);
+        return orderMapper.mapToOrderDto(order);
+    }
+
     private Order getOrder(UUID id) {
         return orderRepository.findById(id).orElseThrow(() -> {
             log.info("Order with ID: {} is not found", id);

@@ -21,6 +21,8 @@ public class Payment {
     @UuidGenerator
     UUID paymentId;
 
+    UUID orderId;
+
     double totalPayment;
 
     double deliveryTotal;
