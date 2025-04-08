@@ -32,7 +32,7 @@ public class DeliveryErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiError handleThrowable(Exception e) {
+    public ApiError handleThrowable(Throwable e) {
         return new ApiError("Unexpected error", e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
