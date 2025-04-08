@@ -7,11 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Map;
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookedProductsDto {
+
+    UUID bookingId;
 
     @NotNull
     Double deliveryWeight;
@@ -20,4 +25,10 @@ public class BookedProductsDto {
     Double deliveryVolume;
 
     Boolean fragile;
+
+    Map<UUID, Integer> products;
+
+    UUID orderId;
+
+    UUID deliveryId;
 }

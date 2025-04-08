@@ -20,6 +20,7 @@ public class NewProductInWarehouseRequest {
     @NotNull
     UUID productId;
 
+    @NotNull
     Boolean fragile;
 
     @NotNull

@@ -1,28 +1,24 @@
 package ru.yandex.practicum.exception;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 
-@Getter
-@Setter
+import java.time.Instant;
+
+@Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ApiError {
-    private Throwable cause;
-    private StackTraceElement[] stackTrace;
-    private HttpStatus httpStatus;
-    private String userMessage;
-    private String message;
-    private Throwable[] suppressed;
-    private String localizedMessage;
+    String message;
+    String reason;
+    HttpStatus status;
+    Instant timestamp;
 
-    public ApiError(HttpStatus httpStatus, Throwable e, String userMessage) {
-        this.cause = e.getCause();
-        this.stackTrace = e.getStackTrace();
-        this.httpStatus = httpStatus;
-        this.userMessage = userMessage;
-        this.message = e.getMessage();
-        this.suppressed = e.getSuppressed();
-        this.localizedMessage = e.getLocalizedMessage();
-
+    public ApiError(String message, String reason, HttpStatus status) {
+        this.message = message;
+        this.reason = reason;
+        this.status = status;
+        timestamp = Instant.now();
     }
 }

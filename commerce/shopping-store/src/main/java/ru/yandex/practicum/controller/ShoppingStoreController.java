@@ -5,13 +5,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.ShoppingStoreOperations;
+import ru.yandex.practicum.ShoppingStoreClient;
 import ru.yandex.practicum.model.Pageable;
 import ru.yandex.practicum.model.ProductDto;
 import ru.yandex.practicum.model.QuantityState;
@@ -25,7 +24,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/shopping-store")
-public class ShoppingStoreController implements ShoppingStoreOperations {
+public class ShoppingStoreController implements ShoppingStoreClient {
     private final ShoppingStoreService shoppingStoreService;
 
     @PutMapping
@@ -34,8 +33,8 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
         return shoppingStoreService.addProduct(product);
     }
 
-    @GetMapping("/{id}")
-    public ProductDto getProductById(@PathVariable UUID id) {
+    @Override
+    public ProductDto getProductById(UUID id) throws FeignException {
         log.info("Received request to get product by ID: {}", id);
         return shoppingStoreService.findProductById(id);
     }
